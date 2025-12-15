@@ -22,6 +22,18 @@ class CardMaterialImpl extends THREE.ShaderMaterial {
             side: THREE.DoubleSide
         });
     }
+
+    get uTime() { return this.uniforms.uTime.value; }
+    set uTime(v) { this.uniforms.uTime.value = v; }
+
+    get uTexture() { return this.uniforms.uTexture.value; }
+    set uTexture(v) { this.uniforms.uTexture.value = v; }
+
+    get uRandom() { return this.uniforms.uRandom.value; }
+    set uRandom(v) { this.uniforms.uRandom.value = v; }
+
+    get uFoilIntensity() { return this.uniforms.uFoilIntensity.value; }
+    set uFoilIntensity(v) { this.uniforms.uFoilIntensity.value = v; }
 }
 
 extend({ CardMaterialImpl });

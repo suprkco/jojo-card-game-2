@@ -33,6 +33,11 @@ const Table = () => {
 
     return (
         <group>
+            {/* DEBUG CUBE: Verify Scene is rendering */}
+            <mesh position={[2, 2, 0]}>
+                <boxGeometry args={[0.5, 0.5, 0.5]} />
+                <meshStandardMaterial color="green" />
+            </mesh>
             {/* Deck Pile */}
             <Card
                 texturePath="/textures/verso/Back Artwork.png"
