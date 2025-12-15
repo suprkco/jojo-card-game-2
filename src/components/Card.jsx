@@ -38,7 +38,7 @@ class CardMaterialImpl extends THREE.ShaderMaterial {
 
 extend({ CardMaterialImpl });
 
-const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, isFoil = false, active = false, onClick, seed }) => {
+const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, isFoil = false, active = false, onClick, seed, direction = 1.0 }) => {
     const mesh = useRef();
     const material = useRef();
 
@@ -51,9 +51,7 @@ const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale =
     useFrame((state, delta) => {
         if (material.current) {
             material.current.uniforms.uTime.value += delta;
-
             // If active (hovered or being viewed), maybe increase breathing?
-            // For now, steady breathing.
         }
     });
 
@@ -71,6 +69,7 @@ const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale =
                 uTexture={texture}
                 uRandom={randomOffset}
                 uFoilIntensity={isFoil || active ? 1.0 : 0.0}
+                uDirection={direction}
             />
         </mesh>
     );

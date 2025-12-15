@@ -134,6 +134,7 @@ const AnimatedCard = ({ card, phase, onDrawComplete, onDiscardComplete, onValida
             // Flip logic (stubbed for visual consistency with current shader)
             tl.to(groupRef.current.rotation, {
                 y: 0,
+                x: -0.4, // Slight tilt back to face camera
                 duration: 1,
                 ease: "power1.out"
             }, "<0.2"); // Start shortly after move
@@ -145,6 +146,9 @@ const AnimatedCard = ({ card, phase, onDrawComplete, onDiscardComplete, onValida
                 duration: 0.8,
                 ease: "power2.in"
             });
+            tl.to(groupRef.current.rotation, {
+                x: 0 // Reset tilt
+            }, "<");
         }
     }, [phase]);
 
@@ -157,6 +161,7 @@ const AnimatedCard = ({ card, phase, onDrawComplete, onDiscardComplete, onValida
                     if (phase === 'READING') onValidate();
                 }}
                 seed={uniqueSeed} // Sync breathing
+                direction={1.0}
             />
             {/* Back Face Hack: Another card rotated 180 behind it? */}
             <Card
@@ -164,6 +169,7 @@ const AnimatedCard = ({ card, phase, onDrawComplete, onDiscardComplete, onValida
                 rotation={[0, Math.PI, 0]}
                 position={[0, 0, -0.01]} // Slight offset to prevent z-fighting
                 seed={uniqueSeed} // Sync breathing
+                direction={-1.0} // Invert breathing phase
             />
         </group>
     );
