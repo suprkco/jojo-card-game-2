@@ -33,11 +33,6 @@ const Table = () => {
 
     return (
         <group>
-            {/* DEBUG CUBE: Verify Scene is rendering */}
-            <mesh position={[2, 2, 0]}>
-                <boxGeometry args={[0.5, 0.5, 0.5]} />
-                <meshStandardMaterial color="green" />
-            </mesh>
             {/* Deck Pile */}
             <Card
                 texturePath="/textures/verso/Back Artwork.png"
@@ -106,6 +101,7 @@ const Choices = ({ cards, onChoose }) => {
 
 const AnimatedCard = ({ card, phase, onDrawComplete, onDiscardComplete, onValidate }) => {
     const groupRef = useRef();
+    const uniqueSeed = useMemo(() => Math.random() * 1000, []); // Sync seed for Front and Back
 
     useEffect(() => {
         if (phase === 'DRAWING') {
@@ -160,12 +156,14 @@ const AnimatedCard = ({ card, phase, onDrawComplete, onDiscardComplete, onValida
                 onClick={() => {
                     if (phase === 'READING') onValidate();
                 }}
+                seed={uniqueSeed} // Sync breathing
             />
             {/* Back Face Hack: Another card rotated 180 behind it? */}
             <Card
                 texturePath="/textures/verso/Back Artwork.png"
                 rotation={[0, Math.PI, 0]}
                 position={[0, 0, -0.01]} // Slight offset to prevent z-fighting
+                seed={uniqueSeed} // Sync breathing
             />
         </group>
     );

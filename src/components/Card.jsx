@@ -38,15 +38,15 @@ class CardMaterialImpl extends THREE.ShaderMaterial {
 
 extend({ CardMaterialImpl });
 
-const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, isFoil = false, active = false, onClick }) => {
+const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, isFoil = false, active = false, onClick, seed }) => {
     const mesh = useRef();
     const material = useRef();
 
     // Load texture
     const texture = useLoader(THREE.TextureLoader, texturePath);
 
-    // Random offset for this instance
-    const randomOffset = useMemo(() => Math.random() * 100, []);
+    // Random offset for this instance (or use provided seed for sync)
+    const randomOffset = useMemo(() => seed !== undefined ? seed : Math.random() * 100, [seed]);
 
     useFrame((state, delta) => {
         if (material.current) {
