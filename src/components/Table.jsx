@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
 import useGameStore from '../store/gameStore';
 import Card from './Card';

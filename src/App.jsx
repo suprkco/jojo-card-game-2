@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense, Component } from 'react'
 import Table from './components/Table'
+import CameraController from './components/CameraController'
 import './index.css'
 
 class ErrorBoundary extends Component {
@@ -39,8 +40,9 @@ function App() {
                     <color attach="background" args={['#1a1a1a']} />
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[10, 10, 5]} intensity={1} />
-                    <Suspense fallback={<mesh position={[0, 0, 0]}><boxGeometry /><meshStandardMaterial color="red" /></mesh>}>
+                    <Suspense fallback={null}>
                         {/* Scene content */}
+                        <CameraController />
                         <Table />
                     </Suspense>
                 </Canvas>
