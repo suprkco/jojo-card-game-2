@@ -12,7 +12,8 @@ const Table = () => {
     const activeCardRef = useRef();
 
     useEffect(() => {
-        initializeDeck();
+        console.log("Table Mounted, initiating deck...");
+        initializeDeck().then(() => console.log("Deck initialized"));
     }, []);
 
     // Handle Draw Animation

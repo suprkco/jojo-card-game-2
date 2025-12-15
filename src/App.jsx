@@ -39,7 +39,7 @@ function App() {
                     <color attach="background" args={['#1a1a1a']} />
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[10, 10, 5]} intensity={1} />
-                    <Suspense fallback={null}>
+                    <Suspense fallback={<mesh position={[0, 0, 0]}><boxGeometry /><meshStandardMaterial color="red" /></mesh>}>
                         {/* Scene content */}
                         <Table />
                     </Suspense>
