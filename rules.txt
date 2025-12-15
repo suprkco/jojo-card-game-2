@@ -1,0 +1,87 @@
+🎲 1. Le Principe de Base
+Le jeu se joue avec un seul téléphone (ou tablette) que l'on se passe, et une vraie pile de défausse virtuelle.
+
+Le but : Survivre jusqu'à la fin du paquet... ou être le dernier debout.
+
+Le tour : Le joueur actif tape sur la pioche, une carte apparaît. Il lit l'effet à haute voix, l'applique, puis valide. La carte part dans la défausse.
+
+🃏 2. Les Catégories de Cartes
+Les cartes sont divisées en plusieurs familles mécaniques inspirées des Stands de l'anime.
+
+A. Les Attaques Directes (Distribution)
+Ce sont les cartes les plus simples : tu donnes des gorgées.
+
+Guido Mista (Sex Pistols) : Distribue 3 gorgées. (Jamais 4, ça porte malheur !).
+
+Narancia (Aerosmith) : Un radar humain. On compare qui a le plus bu, le perdant boit 4.
+
+Fugo (Purple Haze) : Dégâts de zone. Toi et tes deux voisins buvez 4 gorgées. C'est viral.
+
+B. Les Défenses & Contres (Réaction)
+Ces cartes permettent de se sauver la mise.
+
+Giorno (Gold Experience) : Annule les gorgées d'un joueur.
+
+Blackmore (Catch the Rainbow) : Si quelqu'un boit avant toi, tu peux bloquer et renvoyer les dégâts.
+
+Enigma : Une carte "Piège". Tu la gardes (virtuellement) et tu peux l'activer pour dire "Je me replie" et ignorer un effet... mais tu doubleras le prochain.
+
+C. Les Manipulations de Règles (Chaos)
+Elles changent la façon de jouer.
+
+King Crimson (Diavolo) : On saute du temps. Le tour passe, les effets sont ignorés ou amplifiés.
+
+Rohan Kishibe (Heaven’s Door) : Tu peux échanger les mains ou les cartes tirées. Tu réécris la réalité.
+
+Made in Heaven (Pucci) : Reset total. Toutes les cartes en jeu perdent leur effet, tout le monde finit son verre. C'est l'accélération temporelle.
+
+D. Les Mini-Jeux (Social)
+D'Arby (Le Parieur) : Un coup de poker. Tu distribues des gorgées en bluffant. Si l'autre crie "Bluff" à tort, il boit double. S'il a raison, tu bois double.
+
+Ringo Roadagain (Mandom) : Le Duel. Chacun boit à son rythme en se regardant. Le premier qui pose son verre a perdu.
+
+Gyro Zeppeli : Fais tourner un objet réel sur la table. Là où il s'arrête, la personne boit.
+
+🤝 3. Le Système de Synergies (Unique à ton jeu)
+C'est le cœur stratégique. Beaucoup de cartes vérifient "Si X est déjà en jeu" (dans la défausse ou actif). Il faut donc surveiller ce qui a été joué !
+
+La Fratrie Oingo & Boingo :
+
+Si tu tires Boingo seul : Tu bois 3 gorgées (nul).
+
+Si Oingo est déjà passé : Tu distribues un Cul Sec (surpuissant).
+
+Les Ennemis Jurés (Dio vs Jotaro) :
+
+Si tu tires Dio et que Jotaro est en jeu : Le temps s'arrête, duel de vitesse (celui qui finit son verre le plus vite gagne).
+
+Okuyasu & Keicho (Bad Company) :
+
+Si Keicho est joué, il distribue des gorgées. Mais si son frère Okuyasu est là, Okuyasu prend les dégâts à sa place (le bon frère idiot).
+
+🔥 4. Les Cartes "Full Art" (Ultimates)
+Ces cartes sont rares, visuellement impressionnantes et ont des effets dévastateurs qui durent souvent plusieurs tours.
+
+Giorno Full Art (I Have A Dream) : Transforme les gorgées en Culs Secs pour tout le monde jusqu'à nouvel ordre.
+
+Kira Full Art (Bites the Dust) : Une boucle temporelle. La victime doit distribuer 4 gorgées mais en boire 2, encore et encore à chaque tour.
+
+Bucciarati Full Art : Sacrifice. Le joueur boit TOUTES les gorgées distribuées pendant ce tour pour protéger les autres.
+
+🦴 5. Les "Parties du Corps Saint" (La Quête)
+Il y a 9 cartes "Corps Saint" (Yeux, Oreilles, Jambes, etc.). Les trouver donne des bonus immédiats très forts :
+
+Bras Droit / Bras Gauche : Te fait piocher 2 cartes supplémentaires immédiatement (accélère le jeu).
+
+Cœur : Droit de veto absolu sur une gorgée.
+
+Yeux : Tu rends un joueur "aveugle", quelqu'un doit lui lire ses cartes (et peut lui mentir).
+
+📍 6. Les Lieux (Morioh Landmarks)
+Ce sont des événements passifs ou des punitions d'ambiance.
+
+Rocher Angelo : Tu ne peux plus distribuer de gorgées. Si tu le fais, tu bois.
+
+Allée Fantôme : Si tu as été méchant (fait une crasse) ce soir, tu bois. Le jeu te juge.
+
+Murs qui voient (JoJolion) : Oblige un joueur à révéler son jeu ou ses secrets.
