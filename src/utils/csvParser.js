@@ -24,10 +24,13 @@ export const parseDeck = (csvText) => {
 
                     const cleanText = (text) => text ? text.replace(/_x000d_/g, '\n').replace(/_x000D_/g, '\n').trim() : '';
 
+                    // Sanitize filename: Replace apostrophes with underscores to match file system
+                    const textureFilename = row.frame ? row.frame.replace(/'/g, '_') : '';
+
                     return {
                         id: row.frame,
                         name: cleanText(row.card_name),
-                        texture: `/textures/${row.frame}.png`,
+                        texture: `/textures/${textureFilename}.png`,
                         description: cleanText(row.description),
                         mechanic: mechanic,
                         standName: cleanText(row.stand_name),

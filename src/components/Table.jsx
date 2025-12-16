@@ -187,7 +187,7 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
 
                 // DRAW ANIMATION (Snappy!)
                 tl.to(groupRef.current.position, {
-                    y: 4,
+                    y: 2.5,  // Lowered to match reading position
                     z: 0,
                     duration: 0.4,
                     ease: "back.out(1.4)"
@@ -206,8 +206,8 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
 
             } else if (phase === 'READING') {
                 // EXPLICITLY HOLD READING POSITION
-                // Overwrite ensures we snap to it even if previous tween was running
-                gsap.to(groupRef.current.position, { x: 0, y: 4, z: 0, duration: 0.2, overwrite: true });
+                // Lowered from 4 to 2.5 for better mobile visibility
+                gsap.to(groupRef.current.position, { x: 0, y: 2.5, z: 0, duration: 0.2, overwrite: true });
                 gsap.to(groupRef.current.rotation, {
                     x: readingRotation[0],
                     y: readingRotation[1],
