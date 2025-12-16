@@ -2,6 +2,8 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense, Component } from 'react'
 import Table from './components/Table'
 import CameraController from './components/CameraController'
+import GameSetup from './components/GameSetup'
+import CardInfo from './components/CardInfo'
 import './index.css'
 
 class ErrorBoundary extends Component {
@@ -35,21 +37,24 @@ class ErrorBoundary extends Component {
 function App() {
     return (
         <div id="canvas-container">
+            {/* 3D Scene */}
             <ErrorBoundary>
                 <Canvas camera={{ position: [0, 8, 6], fov: 60 }}>
                     <color attach="background" args={['#1a1a1a']} />
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[10, 10, 5]} intensity={1} />
                     <Suspense fallback={null}>
-                        {/* Scene content */}
                         <CameraController />
                         <Table />
                     </Suspense>
                 </Canvas>
             </ErrorBoundary>
+
+            {/* UI Overlays */}
             <div className="ui-layer">
-                {/* UI overlay will go here */}
-                <h1 style={{ position: 'absolute', top: 20, left: 20, color: 'white' }}>JoJo Card Game</h1>
+                <GameSetup />
+                <CardInfo />
+                {/* Remove old simple header, use setup screen instead */}
             </div>
         </div>
     )
