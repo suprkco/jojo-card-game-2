@@ -177,10 +177,10 @@ const PileInspector = ({ cards, onClose, playerName }) => {
                 <meshBasicMaterial color="black" transparent opacity={0.8} />
             </mesh>
 
-            {/* Title */}
-            <Text position={[0, 4, 0]} fontSize={0.5} color="#d4af37" anchorX="center">
-                {playerName}'s Discard Pile
-            </Text>
+            {/* Title removed to avoid external dependency */}
+            {/* <Text position={[0, 4, 0]} fontSize={0.5} color="#d4af37" anchorX="center">
+                 {playerName}'s Discard Pile
+            </Text> */}
 
             {/* Grid of Cards (Visual Only) */}
             <group position={[-3, 3, 0]}>
@@ -203,8 +203,8 @@ const PileInspector = ({ cards, onClose, playerName }) => {
     );
 };
 
-// Text helper for R3F
-import { Text } from '@react-three/drei';
+// Text helper removed to avoid dependency bloat
+// import { Text } from '@react-three/drei';
 
 const Choices = ({ cards, onChoose }) => {
     return (
