@@ -221,4 +221,3 @@ const AnimatedCard = ({ card, phase, targetPos, onDrawComplete, onDiscardComplet
 };
 
 export default Table;
-export default Table;
