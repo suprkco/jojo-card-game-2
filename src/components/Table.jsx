@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useLayoutEffect } from 'react';
-import { useThree, useLoader } from '@react-three/fiber';
+import { useThree, useLoader, useFrame } from '@react-three/fiber';
 import useGameStore from '../store/gameStore';
 import Card from './Card';
 import gsap from 'gsap';
@@ -223,25 +223,52 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
     const groupRef = useRef();
     const uniqueSeed = useMemo(() => Math.random() * 1000, []);
 
+    // Dynamic Tilt Effect
+    useThree((state) => {
+        // We use useFrame inside useThree or just import useFrame?
+        // Wait, useThree is a hook getting context. useFrame is the loop hook.
+        // It's safer to use useFrame from the import. 
+    });
+
+    useLoader(THREE.TextureLoader, card.texture); // Preload
+
+    // Tilt Logic
+    const { pointer } = useThree();
+
+    // Animate Tilt
+    useFrame((state, delta) => {
+        if (phase === 'READING' && groupRef.current) {
+            // Softly interpolate rotation towards pointer direction
+            // Base rotation: readingRotation
+            // Add tilt: pointer.x * factor
+
+            const targetRotX = readingRotation[0] - (state.pointer.y * 0.2); // Look up/down
+            const targetRotY = readingRotation[1] + (state.pointer.x * 0.2); // Look left/right
+
+            // Smooth damping
+            // We can't use dampE for pure values easily, manual lerp is fine
+            groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, delta * 5);
+            groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, delta * 5);
+        }
+    });
+
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            // Kill active tweens to prevent fighting
+            // Kill active tweens
             gsap.killTweensOf(groupRef.current);
             gsap.killTweensOf(groupRef.current.position);
             gsap.killTweensOf(groupRef.current.rotation);
             gsap.killTweensOf(groupRef.current.scale);
 
             if (phase === 'DRAWING') {
-                // START (Reset only if drawing fresh)
                 gsap.set(groupRef.current.position, { x: 0, y: 0, z: 0 });
                 gsap.set(groupRef.current.rotation, { x: -Math.PI / 2, y: 0, z: Math.PI });
                 gsap.set(groupRef.current.scale, { x: 0.1, y: 0.1, z: 0.1 });
 
                 const tl = gsap.timeline({ onComplete: onDrawComplete });
 
-                // DRAW ANIMATION (Snappy!)
                 tl.to(groupRef.current.position, {
-                    y: 2.5,  // Lowered to match reading position
+                    y: 0.9, // Fixed to 0.9
                     z: 0,
                     duration: 0.4,
                     ease: "back.out(1.4)"
@@ -250,6 +277,7 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                     x: 2, y: 2, z: 2,
                     duration: 0.3
                 }, "<");
+                // For rotation, we animate to BASE rotation, useFrame handles tilt
                 tl.to(groupRef.current.rotation, {
                     x: readingRotation[0],
                     y: readingRotation[1],
@@ -259,16 +287,16 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                 }, "<0.05");
 
             } else if (phase === 'READING') {
-                // EXPLICITLY HOLD READING POSITION
-                // Lowered from 4 to 2.5 for better mobile visibility
-                gsap.to(groupRef.current.position, { x: 0, y: 2.5, z: 0, duration: 0.2, overwrite: true });
-                gsap.to(groupRef.current.rotation, {
-                    x: readingRotation[0],
-                    y: readingRotation[1],
-                    z: readingRotation[2],
-                    duration: 0.2,
-                    overwrite: true
-                });
+                // Hold Position
+                gsap.to(groupRef.current.position, { x: 0, y: 0.9, z: 0, duration: 0.2, overwrite: true });
+                // Rotation is now handled by useFrame mostly, but we set base here
+                // actually gsap might fight useFrame. 
+                // Fix: In READING, we let useFrame take control of rotation. 
+                // but we need to ensure we don't snap.
+                // The draw animation ends at readingRotation.
+                // useFrame starts blending from there.
+
+                // We just set scale and position here.
                 gsap.to(groupRef.current.scale, { x: 2, y: 2, z: 2, duration: 0.2, overwrite: true });
 
             } else if (phase === 'DISCARDING') {
