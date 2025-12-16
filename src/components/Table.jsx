@@ -105,10 +105,10 @@ const Table = () => {
                                 setInspectingPlayer(index);
                             }}
                         >
-                            <planeGeometry args={[1.6, 2.4]} />
+                            <planeGeometry args={[1.1, 1.6]} />
                             <meshBasicMaterial color="white" opacity={0.1} transparent side={THREE.DoubleSide} />
                             <lineSegments>
-                                <edgesGeometry args={[new THREE.PlaneGeometry(1.6, 2.4)]} />
+                                <edgesGeometry args={[new THREE.PlaneGeometry(1.1, 1.6)]} />
                                 <lineBasicMaterial color={isCurrent ? "#ffd700" : "#444"} linewidth={1} />
                             </lineSegments>
                         </mesh>

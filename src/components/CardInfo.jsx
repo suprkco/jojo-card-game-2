@@ -9,7 +9,7 @@ const CardInfo = () => {
     return (
         <div style={{
             position: 'absolute',
-            bottom: '10%',
+            bottom: '15%', // Raised to avoid bottom cut-off
             left: '50%',
             transform: 'translateX(-50%)',
             background: 'rgba(0,0,0,0.9)',
