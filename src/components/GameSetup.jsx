@@ -25,29 +25,74 @@ const GameSetup = () => {
         <div style={{
             position: 'absolute',
             top: 0, left: 0, width: '100%', height: '100%',
-            background: 'rgba(20,20,20,0.95)',
+            background: '#111',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 100
+            zIndex: 100,
+            overflow: 'hidden'
         }}>
-            <h1 style={{
-                color: '#d4af37',
-                fontSize: '4em',
-                fontFamily: 'Impact',
-                marginBottom: '50px',
-                textShadow: '0 0 20px rgba(212, 175, 55, 0.5)'
+            {/* Scrolling Background */}
+            <div style={{
+                position: 'absolute',
+                top: 0, left: 0, width: '200%', height: '100%',
+                display: 'flex',
+                flexWrap: 'wrap',
+                opacity: 0.2,
+                transform: 'rotate(-15deg) scale(1.5)',
+                zIndex: -1,
+                pointerEvents: 'none'
             }}>
-                JOJO CARD GAME
-            </h1>
+                {/* Just a grid of placeholders or textures if we had a list */}
+                {Array.from({ length: 40 }).map((_, i) => (
+                    <div key={i} style={{
+                        width: '100px', height: '150px',
+                        margin: '10px',
+                        background: i % 2 === 0 ? '#442a8b' : '#a73c9f',
+                        borderRadius: '5px'
+                    }}></div>
+                ))}
+            </div>
 
-            <h2 style={{ color: 'white', marginBottom: '30px' }}>SELECT PLAYERS</h2>
+            <div style={{
+                textAlign: 'center',
+                zIndex: 2,
+                background: 'rgba(0,0,0,0.6)',
+                padding: '40px',
+                borderRadius: '20px',
+                backdropFilter: 'blur(10px)'
+            }}>
+                <h1 style={{
+                    color: '#d4af37',
+                    fontSize: '3em',
+                    fontFamily: 'Impact',
+                    marginBottom: '20px',
+                    letterSpacing: '3px'
+                }}>
+                    JOJO CARD
+                </h1>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <button style={btnStyle} onClick={() => startGame(2)}>2 PLAYERS</button>
-                <button style={btnStyle} onClick={() => startGame(3)}>3 PLAYERS</button>
-                <button style={btnStyle} onClick={() => startGame(4)}>4 PLAYERS</button>
+                <p style={{ color: '#ccc', marginBottom: '30px', fontFamily: 'Arial' }}>Select Players</p>
+
+                <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+                    {[2, 3, 4].map(num => (
+                        <button key={num} onClick={() => startGame(num)} style={{
+                            background: 'transparent',
+                            border: '2px solid #d4af37',
+                            color: '#d4af37',
+                            width: '60px',
+                            height: '60px',
+                            fontSize: '1.5em',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            borderRadius: '50%',
+                            transition: 'all 0.2s'
+                        }}>
+                            {num}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
     );

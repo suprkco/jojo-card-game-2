@@ -9,38 +9,39 @@ const CardInfo = () => {
     return (
         <div style={{
             position: 'absolute',
-            bottom: '50px',
+            bottom: '10%',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: 'rgba(0,0,0,0.85)',
-            border: '2px solid #d4af37',
-            padding: '20px',
-            borderRadius: '10px',
+            background: 'rgba(0,0,0,0.9)',
+            border: '1px solid #d4af37',
+            padding: '15px',
+            borderRadius: '8px',
             color: 'white',
             textAlign: 'center',
-            maxWidth: '80%',
-            backdropFilter: 'blur(5px)',
-            pointerEvents: 'none' // Let clicks pass through to validating tap
+            width: '85%',
+            maxWidth: '350px',
+            pointerEvents: 'none'
         }}>
             <h2 style={{
-                margin: '0 0 10px 0',
+                margin: '0 0 5px 0',
                 fontFamily: 'Impact, sans-serif',
-                letterSpacing: '2px',
+                letterSpacing: '1px',
                 color: '#d4af37',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                fontSize: '1.4em'
             }}>
                 {currentCard.name}
             </h2>
             {currentCard.standName && (
-                <h4 style={{ margin: '0 0 10px 0', color: '#a0a0a0' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: '#a0a0a0', fontSize: '0.9em' }}>
                     Stand: {currentCard.standName}
                 </h4>
             )}
-            <p style={{ margin: 0, fontSize: '1.1em', lineHeight: '1.4' }}>
+            <p style={{ margin: 0, fontSize: '0.95em', lineHeight: '1.3' }}>
                 {currentCard.description}
             </p>
-            <div style={{ marginTop: '10px', fontSize: '0.8em', color: '#666' }}>
-                (Tap text or card to continue)
+            <div style={{ marginTop: '8px', fontSize: '0.7em', color: '#666' }}>
+                (Tap to continue)
             </div>
         </div>
     );
