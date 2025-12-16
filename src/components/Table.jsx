@@ -70,14 +70,7 @@ const Table = () => {
                 ))}
             </group>
 
-            {/* Pile Inspector Overlay */}
-            {inspectingPlayer !== null && (
-                <PileInspector
-                    cards={players[inspectingPlayer].discardPile}
-                    onClose={() => setInspectingPlayer(null)}
-                    playerName={players[inspectingPlayer].name}
-                />
-            )}
+            {/* Pile Inspector is now handled in App.jsx via HTML overlay */}
 
             {/* Players & Discards */}
             {players.map((player, index) => {

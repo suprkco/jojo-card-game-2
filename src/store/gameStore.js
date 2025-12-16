@@ -43,12 +43,22 @@ const useGameStore = create((set, get) => ({
             const initialDeck = await parseDeck(csvText);
 
             // Setup Players from Names
-            const players = playerNames.map((name, i) => ({
-                id: i,
-                name: name || `Jojo ${i + 1}`,
-                avatar: AVATARS[i % AVATARS.length],
-                discardPile: []
-            }));
+            let players = [];
+            if (typeof playerNames === 'number') {
+                players = Array.from({ length: playerNames }).map((_, i) => ({
+                    id: i,
+                    name: `Jojo ${i + 1}`,
+                    avatar: AVATARS[i % AVATARS.length],
+                    discardPile: []
+                }));
+            } else {
+                players = playerNames.map((name, i) => ({
+                    id: i,
+                    name: name || (i === 0 ? "Jotaro" : i === 1 ? "Dio" : i === 2 ? "Giorno" : "Jolyne"),
+                    avatar: AVATARS[i % AVATARS.length],
+                    discardPile: []
+                }));
+            }
 
             // Shuffle
             const shuffledDeck = initialDeck.sort(() => Math.random() - 0.5);

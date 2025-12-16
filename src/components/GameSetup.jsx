@@ -6,6 +6,16 @@ const GameSetup = () => {
 
     if (phase !== GAME_PHASES.SETUP) return null;
 
+    const [names, setNames] = React.useState([]);
+    const [inputValue, setInputValue] = React.useState('');
+
+    const addPlayer = () => {
+        if (inputValue.trim()) {
+            setNames([...names, inputValue.trim()]);
+            setInputValue('');
+        }
+    };
+
     const btnStyle = {
         background: 'linear-gradient(45deg, #442a8b, #a73c9f)',
         border: '3px solid white',
@@ -73,26 +83,69 @@ const GameSetup = () => {
                     JOJO CARD
                 </h1>
 
-                <p style={{ color: '#ccc', marginBottom: '30px', fontFamily: 'Arial' }}>Select Players</p>
-
-                <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-                    {[2, 3, 4].map(num => (
-                        <button key={num} onClick={() => startGame(num)} style={{
-                            background: 'transparent',
-                            border: '2px solid #d4af37',
-                            color: '#d4af37',
-                            width: '60px',
-                            height: '60px',
-                            fontSize: '1.5em',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            borderRadius: '50%',
-                            transition: 'all 0.2s'
-                        }}>
-                            {num}
-                        </button>
-                    ))}
+                {/* Player List */}
+                <div style={{ marginBottom: '20px', minHeight: '50px' }}>
+                    {names.length === 0 ? (
+                        <p style={{ color: '#888' }}>Add players to start...</p>
+                    ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+                            {names.map((name, i) => (
+                                <span key={i} style={{
+                                    background: '#d4af37', color: 'black',
+                                    padding: '5px 10px', borderRadius: '4px', fontWeight: 'bold'
+                                }}>
+                                    {name}
+                                </span>
+                            ))}
+                        </div>
+                    )}
                 </div>
+
+                {/* Input Area */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', justifyContent: 'center' }}>
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
+                        placeholder="Player Name"
+                        style={{
+                            padding: '10px',
+                            background: 'rgba(255,255,255,0.1)',
+                            border: '1px solid #d4af37',
+                            color: 'white',
+                            borderRadius: '5px',
+                            outline: 'none'
+                        }}
+                    />
+                    <button onClick={addPlayer} style={{
+                        background: '#d4af37', border: 'none', borderRadius: '5px',
+                        cursor: 'pointer', fontWeight: 'bold', padding: '0 15px'
+                    }}>
+                        +
+                    </button>
+                </div>
+
+                {/* Start Button */}
+                <button
+                    onClick={() => names.length >= 2 && startGame(names)}
+                    disabled={names.length < 2}
+                    style={{
+                        background: names.length >= 2 ? 'linear-gradient(45deg, #442a8b, #a73c9f)' : '#333',
+                        border: '2px solid white',
+                        color: names.length >= 2 ? 'white' : '#666',
+                        padding: '10px 40px',
+                        fontSize: '1.2em',
+                        fontWeight: 'bold',
+                        cursor: names.length >= 2 ? 'pointer' : 'not-allowed',
+                        borderRadius: '30px',
+                        fontFamily: 'Impact',
+                        textTransform: 'uppercase',
+                        opacity: names.length >= 2 ? 1 : 0.5
+                    }}
+                >
+                    START GAME
+                </button>
             </div>
         </div>
     );
