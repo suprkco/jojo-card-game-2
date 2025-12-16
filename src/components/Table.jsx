@@ -6,18 +6,15 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 
 // Player Position Utilities
-const TABLE_RADIUS = 2.5; // Tighter circle for better visibility
+const TABLE_RADIUS_X = 2.5;
+const TABLE_RADIUS_Z = 1.8; // Compressed Z-axis (Oval) to bring players closer vertically
 const getPlayerPos = (index, total) => {
     // Index 0 = Bottom (Player), 1 = Left, 2 = Top, 3 = Right (Clockwise)
-    // Angle 0 is Right. Angle PI/2 is Bottom.
-    // Start at PI/2, add index * (2PI/total) ?
-    // 0 -> PI/2 (Bottom)
-    // 1 -> PI/2 + PI/2 = PI (Left) -- Wait, PI is Left? Cos(PI)=-1. Yes.
-    // 2 -> 3PI/2 (Top)
-    // 3 -> 2PI (Right)
     const angle = Math.PI / 2 + (index * (Math.PI * 2) / total);
-    return [Math.cos(angle) * TABLE_RADIUS, 0, Math.sin(angle) * TABLE_RADIUS];
+    return [Math.cos(angle) * TABLE_RADIUS_X, 0, Math.sin(angle) * TABLE_RADIUS_Z];
 };
+
+// (Deleted junk code)
 
 const Table = () => {
     const {

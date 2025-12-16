@@ -38,7 +38,7 @@ class CardMaterialImpl extends THREE.ShaderMaterial {
 
 extend({ CardMaterialImpl });
 
-const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, isFoil = false, active = false, onClick, seed, direction = 1.0 }) => {
+const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, isFoil = false, active = false, onClick, seed, direction = 1.0, depthTest = true, renderOrder = 0 }) => {
     const mesh = useRef();
     const material = useRef();
 
@@ -62,6 +62,7 @@ const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale =
             rotation={rotation}
             scale={scale}
             onClick={onClick}
+            renderOrder={renderOrder} // Control rendering order
         >
             <planeGeometry args={[2, 3, 32, 32]} /> {/* High segment count for vertex shader deformation */}
             <cardMaterialImpl
@@ -70,6 +71,8 @@ const Card = ({ texturePath, position = [0, 0, 0], rotation = [0, 0, 0], scale =
                 uRandom={randomOffset}
                 uFoilIntensity={isFoil || active ? 1.0 : 0.0}
                 uDirection={direction}
+                depthTest={depthTest} // Control depth testing
+                depthWrite={depthTest} // Usually if testing is off, writing should be off too
             />
         </mesh>
     );
