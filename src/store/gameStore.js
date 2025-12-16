@@ -18,14 +18,6 @@ const AVATARS = [
     '/avatars/avatar_6.png'
 ];
 
-export const GAME_PHASES = {
-    SETUP: 'SETUP',
-    IDLE: 'IDLE',
-    DRAWING: 'DRAWING',
-    READING: 'READING',
-    DISCARDING: 'DISCARDING',
-    CHOOSING_KEEP: 'CHOOSING_KEEP'
-};
 
 const useGameStore = create((set, get) => ({
     deck: [],
