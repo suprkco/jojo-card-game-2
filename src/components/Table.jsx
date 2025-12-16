@@ -114,11 +114,24 @@ const Table = () => {
                             </lineSegments>
                         </mesh>
 
+                        {/* Curse Slot (Scolippi) */}
+                        {player.curseSlot && (
+                            <Card
+                                key={player.curseSlot.id}
+                                texturePath={player.curseSlot.texture}
+                                position={[1.3, 0.1, 0.8]} // To the right of discard
+                                rotation={[-Math.PI / 2, 0, 0]}
+                                scale={0.5}
+                                active={true} // It's special
+                                isFoil={true} // Make it glow a bit?
+                            />
+                        )}
+
                         {/* Player's Discard Pile (Top Card) */}
                         {player.discardPile.length > 0 && (
                             <Card
                                 key={player.discardPile[0].id}
-                                texturePath={player.discardPile[0].texture}
+                                texturePath={player.discardPile[0].hidden ? "/textures/verso/Back Artwork.png" : player.discardPile[0].texture}
                                 position={[0, 0.1, 0.8]} // Match marker position
                                 rotation={[-Math.PI / 2, 0, Math.random() * 0.1 - 0.05]}
                                 scale={0.5}

@@ -36,6 +36,10 @@ const useGameStore = create((set, get) => ({
     inspectingPlayer: null, // Index of player whose pile is being inspected
     setInspectingPlayer: (index) => set({ inspectingPlayer: index }),
 
+    turnCount: 0,
+
+    // ... (existing state)
+
     startGame: async (playerNames = []) => {
         try {
             const response = await fetch('/cards.csv');
@@ -44,20 +48,20 @@ const useGameStore = create((set, get) => ({
 
             // Setup Players from Names
             let players = [];
+            const createPlayer = (i, name) => ({
+                id: i,
+                name: name,
+                avatar: AVATARS[i % AVATARS.length],
+                discardPile: [],
+                curseSlot: null // Special slot for Scolippi
+            });
+
             if (typeof playerNames === 'number') {
-                players = Array.from({ length: playerNames }).map((_, i) => ({
-                    id: i,
-                    name: `Jojo ${i + 1}`,
-                    avatar: AVATARS[i % AVATARS.length],
-                    discardPile: []
-                }));
+                players = Array.from({ length: playerNames }).map((_, i) => createPlayer(i, `Jojo ${i + 1}`));
             } else {
-                players = playerNames.map((name, i) => ({
-                    id: i,
-                    name: name || (i === 0 ? "Jotaro" : i === 1 ? "Dio" : i === 2 ? "Giorno" : "Jolyne"),
-                    avatar: AVATARS[i % AVATARS.length],
-                    discardPile: []
-                }));
+                players = playerNames.map((name, i) =>
+                    createPlayer(i, name || (i === 0 ? "Jotaro" : i === 1 ? "Dio" : i === 2 ? "Giorno" : "Jolyne"))
+                );
             }
 
             // Shuffle
@@ -67,7 +71,8 @@ const useGameStore = create((set, get) => ({
                 deck: shuffledDeck,
                 players: players,
                 currentPlayerIndex: 0,
-                phase: GAME_PHASES.IDLE
+                phase: GAME_PHASES.IDLE,
+                turnCount: 0
             });
         } catch (error) {
             console.error("Failed to start game:", error);
@@ -75,7 +80,7 @@ const useGameStore = create((set, get) => ({
     },
 
     drawCard: () => {
-        const { deck, phase, extraDraws } = get();
+        const { deck, phase, extraDraws, players, currentPlayerIndex } = get();
         // Only allow drawing in IDLE
         if (phase !== GAME_PHASES.IDLE && extraDraws === 0) return;
         if (deck.length === 0) return;
@@ -85,11 +90,26 @@ const useGameStore = create((set, get) => ({
             const card = newDeck.shift();
             const newExtraDraws = state.extraDraws > 0 ? state.extraDraws - 1 : 0;
 
+            // Scolippi Transfer Logic (Bucciarati)
+            let newPlayers = [...state.players];
+            if (card.name.toLowerCase().includes("bucciarati")) {
+                // Check if anyone holds Scolippi
+                let scolippiHolderIndex = newPlayers.findIndex(p => p.curseSlot && p.curseSlot.name.toLowerCase().includes("scolippi"));
+                if (scolippiHolderIndex !== -1 && scolippiHolderIndex !== state.currentPlayerIndex) {
+                    // Transfer to current player
+                    const curseCard = newPlayers[scolippiHolderIndex].curseSlot;
+                    newPlayers[scolippiHolderIndex] = { ...newPlayers[scolippiHolderIndex], curseSlot: null };
+                    newPlayers[state.currentPlayerIndex] = { ...newPlayers[state.currentPlayerIndex], curseSlot: curseCard };
+                }
+            }
+
             return {
                 currentCard: card,
                 deck: newDeck,
                 phase: GAME_PHASES.DRAWING,
-                extraDraws: newExtraDraws
+                extraDraws: newExtraDraws,
+                players: newPlayers,
+                currentCardIsHidden: false // Reset
             };
         });
     },
@@ -98,9 +118,11 @@ const useGameStore = create((set, get) => ({
         set({ phase: GAME_PHASES.READING });
     },
 
-    validateCard: () => {
+    validateCard: (isFaceDown = false) => {
         const { currentCard } = get();
         if (!currentCard) return;
+
+        set({ currentCardIsHidden: isFaceDown });
 
         if (currentCard.mechanic === MECHANICS.BRAS_DROIT) {
             set({
@@ -131,13 +153,41 @@ const useGameStore = create((set, get) => ({
             const pendingChoices = state.pendingChoices || [];
             const wasFleche = state.currentCard.mechanic === MECHANICS.FLECHE;
 
-            // Add to CURRENT PLAYER'S discard pile
+            // Hidden Logic
+            const cardToAdd = { ...state.currentCard, hidden: state.currentCardIsHidden };
+            const isScolippi = cardToAdd.name.toLowerCase().includes("scolippi");
+
+            // Add to CURRENT PLAYER'S discard pile OR Curse Slot
             const playerIndex = state.currentPlayerIndex;
             const newPlayers = [...state.players];
-            newPlayers[playerIndex] = {
-                ...newPlayers[playerIndex],
-                discardPile: [state.currentCard, ...newPlayers[playerIndex].discardPile]
-            };
+
+            if (isScolippi) {
+                newPlayers[playerIndex] = {
+                    ...newPlayers[playerIndex],
+                    curseSlot: cardToAdd
+                };
+            } else {
+                newPlayers[playerIndex] = {
+                    ...newPlayers[playerIndex],
+                    discardPile: [cardToAdd, ...newPlayers[playerIndex].discardPile]
+                };
+            }
+
+            // Turn Count & Reveal Logic
+            let newTurnCount = state.turnCount + 1;
+            // A "Round" ends when turnCount % playerCount == 0? 
+            // The prompt says "un tour = chaque joueur à tiré une carte"
+            // So yes, after N turns (where N is player count).
+
+            if (newTurnCount % state.players.length === 0) {
+                // Reveal all hidden cards
+                newPlayers.forEach((p, i) => {
+                    newPlayers[i] = {
+                        ...p,
+                        discardPile: p.discardPile.map(c => c.hidden ? { ...c, hidden: false } : c)
+                    };
+                });
+            }
 
             // Next Turn Logic (Round Robin)
             // If extraDraws > 0 (Bras Droit), same player continues.
@@ -145,6 +195,8 @@ const useGameStore = create((set, get) => ({
             if (state.extraDraws === 0 && !wasFleche) {
                 nextPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
             }
+
+            // ... (rest is same)
 
             if (wasFleche && pendingChoices.length > 0) {
                 return {
@@ -165,20 +217,27 @@ const useGameStore = create((set, get) => ({
         });
     },
 
-    chooseCard: (keptCard) => {
-        set((state) => {
-            const other = state.choices.find(c => c.id !== keptCard.id);
-            const newDeck = [...state.deck];
-            if (other) newDeck.push(other);
-
-            return {
-                choices: [],
-                deck: newDeck,
-                currentCard: keptCard,
-                phase: GAME_PHASES.READING
-            };
+    currentCard: keptCard,
+    phase: GAME_PHASES.READING
+};
         });
-    }
+    },
+
+moveCard: (cardId, fromPlayerIndex, toPlayerIndex) => {
+    set((state) => {
+        const newPlayers = [...state.players];
+        const fromPlayer = newPlayers[fromPlayerIndex];
+        const toPlayer = newPlayers[toPlayerIndex];
+
+        const cardIndex = fromPlayer.discardPile.findIndex(c => c.id === cardId);
+        if (cardIndex === -1) return {}; // Failed
+
+        const [card] = fromPlayer.discardPile.splice(cardIndex, 1);
+        toPlayer.discardPile = [card, ...toPlayer.discardPile];
+
+        return { players: newPlayers };
+    });
+}
 }));
 
 export default useGameStore;
