@@ -98,7 +98,7 @@ const Table = () => {
 
                         {/* Discard Slot Marker (Clickable) */}
                         <mesh
-                            position={[0, 0.01, 1.5]}
+                            position={[0, 0.01, 0.8]} // Moved "up" (further back) to 0.8
                             rotation={[-Math.PI / 2, 0, 0]}
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -118,7 +118,7 @@ const Table = () => {
                             <Card
                                 key={player.discardPile[0].id}
                                 texturePath={player.discardPile[0].texture}
-                                position={[0, 0.1, 1.5]}
+                                position={[0, 0.1, 0.8]} // Match marker position
                                 rotation={[-Math.PI / 2, 0, Math.random() * 0.1 - 0.05]}
                                 scale={0.8}
                                 active={false}

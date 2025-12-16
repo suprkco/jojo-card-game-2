@@ -12,7 +12,7 @@ const CardInfo = () => {
             bottom: '15%', // Raised to avoid bottom cut-off
             left: '50%',
             transform: 'translateX(-50%)',
-            background: 'rgba(0,0,0,0.9)',
+            background: 'rgba(0,0,0,0.6)', // More transparency for better visibility
             border: '1px solid #d4af37',
             padding: '15px',
             borderRadius: '8px',
