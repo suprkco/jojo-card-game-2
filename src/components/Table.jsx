@@ -9,12 +9,16 @@ import * as THREE from 'three';
 const TABLE_RADIUS_X = 2.5;
 const TABLE_RADIUS_Z = 1.8; // Compressed Z-axis (Oval) to bring players closer vertically
 const getPlayerPos = (index, total) => {
-    // Index 0 = Bottom (Player), 1 = Left, 2 = Top, 3 = Right (Clockwise)
-    const angle = Math.PI / 2 + (index * (Math.PI * 2) / total);
+    // Distribute players in a centered arc at the South (PI/2)
+    const angleStep = Math.PI / 3; // 60 degrees spread
+    const centerAngle = Math.PI / 2; // South
+    // Center the group of players around PI/2
+    const offset = (index - (total - 1) / 2) * angleStep;
+    const angle = centerAngle + offset;
     return [Math.cos(angle) * TABLE_RADIUS_X, 0, Math.sin(angle) * TABLE_RADIUS_Z];
 };
 
-// (Deleted junk code)
+
 
 const Table = () => {
     const {
@@ -50,7 +54,7 @@ const Table = () => {
             <group position={[0, 0, 0]}>
                 <Card
                     texturePath="/textures/verso/Back Artwork.png"
-                    position={[0, 0, 0]}
+                    position={[0, 0, -2]} // Deck at North
                     rotation={[-Math.PI / 2, 0, 0]}
                     scale={1}
                     active={false}
@@ -60,7 +64,7 @@ const Table = () => {
                 />
                 {/* Visual Stack Thickness */}
                 {deck.length > 0 && Array.from({ length: Math.min(deck.length, 5) }).map((_, i) => (
-                    <mesh key={i} position={[0, -0.02 * (i + 1), 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <mesh key={i} position={[0, -0.02 * (i + 1), -2]} rotation={[-Math.PI / 2, 0, 0]}>
                         <planeGeometry args={[2, 3]} />
                         <meshBasicMaterial color="#0a0a0a" />
                     </mesh>
@@ -102,7 +106,7 @@ const Table = () => {
                                 setInspectingPlayer(index);
                             }}
                         >
-                            <planeGeometry args={[1.1, 1.6]} />
+                            <planeGeometry args={[0.7, 1.05]} />
                             <meshBasicMaterial color="white" opacity={0.1} transparent side={THREE.DoubleSide} />
                             <lineSegments>
                                 <edgesGeometry args={[new THREE.PlaneGeometry(1.1, 1.6)]} />
@@ -117,7 +121,7 @@ const Table = () => {
                                 texturePath={player.discardPile[0].texture}
                                 position={[0, 0.1, 0.8]} // Match marker position
                                 rotation={[-Math.PI / 2, 0, Math.random() * 0.1 - 0.05]}
-                                scale={0.8}
+                                scale={0.5}
                                 active={false}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent drawing if clicking pile
@@ -331,9 +335,9 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                 texturePath={card.texture}
                 // Allow clicking anywhere on card to close reading
                 onClick={() => { if (phase === 'READING') onValidate(); }}
-                active={phase === 'READING'}
-                seed={uniqueSeed}
-                direction={1.0}
+                // Force top rendering to avoid clipping
+                depthTest={phase !== 'READING'} // Disable depth test only when reading
+                renderOrder={phase === 'READING' ? 999 : 0}
             />
             {/* Back Face (Synchronized) */}
             <Card
@@ -342,6 +346,8 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                 position={[0, 0, -0.01]}
                 seed={uniqueSeed}
                 direction={-1.0}
+                depthTest={phase !== 'READING'}
+                renderOrder={phase === 'READING' ? 999 : 0}
             />
         </group>
     );
