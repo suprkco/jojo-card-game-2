@@ -20,7 +20,7 @@ const CardInfo = () => {
             textAlign: 'center',
             width: '85%',
             maxWidth: '350px',
-            pointerEvents: 'none'
+            pointerEvents: 'auto' // Allow clicks on buttons
         }}>
             <h2 style={{
                 margin: '0 0 5px 0',
@@ -40,8 +40,35 @@ const CardInfo = () => {
             <p style={{ margin: 0, fontSize: '0.95em', lineHeight: '1.3' }}>
                 {currentCard.description}
             </p>
-            <div style={{ marginTop: '8px', fontSize: '0.7em', color: '#666' }}>
-                (Tap to continue)
+            <div style={{ marginTop: '15px', display: 'flex', gap: '10px', justifyContent: 'center', pointerEvents: 'auto' }}>
+                <button
+                    onClick={() => useGameStore.getState().validateCard(false)}
+                    style={{
+                        padding: '8px 16px',
+                        background: '#d4af37',
+                        color: 'black',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Visible 👁️
+                </button>
+                <button
+                    onClick={() => useGameStore.getState().validateCard(true)}
+                    style={{
+                        padding: '8px 16px',
+                        background: '#444',
+                        color: 'white',
+                        border: '1px solid #666',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Cachée 🕵️
+                </button>
             </div>
         </div>
     );

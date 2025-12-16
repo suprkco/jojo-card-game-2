@@ -61,12 +61,30 @@ function App() {
 import useGameStore from './store/gameStore';
 
 const PileInspectorOverlay = () => {
-    const { players, inspectingPlayer, setInspectingPlayer } = useGameStore();
+    const { players, inspectingPlayer, setInspectingPlayer, currentPlayerIndex, moveCard } = useGameStore();
+    const [selectedMilagro, setSelectedMilagro] = React.useState(null);
 
     if (inspectingPlayer === null || !players[inspectingPlayer]) return null;
 
     const player = players[inspectingPlayer];
     const cards = player.discardPile;
+    const isMyPile = inspectingPlayer === currentPlayerIndex;
+
+    const handleCardClick = (e, card) => {
+        e.stopPropagation();
+        // Only allow moving Milagro Man from OWN pile
+        if (isMyPile && card.name.toLowerCase().includes("milagro")) {
+            setSelectedMilagro(card);
+        }
+    };
+
+    const handleTransfer = (targetIndex) => {
+        if (selectedMilagro) {
+            moveCard(selectedMilagro.id, inspectingPlayer, targetIndex);
+            setSelectedMilagro(null);
+            setInspectingPlayer(null); // Close inspector after move
+        }
+    };
 
     return (
         <div style={{
@@ -80,7 +98,10 @@ const PileInspectorOverlay = () => {
             padding: '40px',
             boxSizing: 'border-box',
             overflowY: 'auto'
-        }} onClick={() => setInspectingPlayer(null)}>
+        }} onClick={() => {
+            if (selectedMilagro) setSelectedMilagro(null);
+            else setInspectingPlayer(null);
+        }}>
 
             <h2 style={{
                 color: '#d4af37',
@@ -93,6 +114,32 @@ const PileInspectorOverlay = () => {
                 {player.name}'s Discard Pile
             </h2>
 
+            {/* Milagro Selection Modal */}
+            {selectedMilagro && (
+                <div style={{
+                    position: 'absolute',
+                    top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                    background: '#222', border: '2px solid #d4af37', padding: '20px',
+                    zIndex: 300, borderRadius: '10px', textAlign: 'center'
+                }} onClick={(e) => e.stopPropagation()}>
+                    <h3 style={{ color: 'white' }}>Give {selectedMilagro.name} to:</h3>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                        {players.map((p, i) => (
+                            i !== inspectingPlayer && (
+                                <button key={i} onClick={() => handleTransfer(i)} style={{
+                                    padding: '10px', cursor: 'pointer', background: '#444', color: 'white', border: '1px solid #666'
+                                }}>
+                                    {p.name}
+                                </button>
+                            )
+                        ))}
+                    </div>
+                    <button onClick={() => setSelectedMilagro(null)} style={{ marginTop: '15px', background: 'transparent', color: '#888', border: 'none', cursor: 'pointer' }}>
+                        Cancel
+                    </button>
+                </div>
+            )}
+
             <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
@@ -102,27 +149,40 @@ const PileInspectorOverlay = () => {
                 width: '100%'
             }}>
                 {cards.length === 0 ? (
-                    <p style={{ color: '#666', fontSize: '1.2em' }}>No cards discard yet.</p>
+                    <p style={{ color: '#666', fontSize: '1.2em' }}>No cards discarded yet.</p>
                 ) : (
                     cards.map((card, i) => (
                         <div key={i} style={{
                             width: '150px',
                             height: '225px',
                             perspective: '1000px',
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s'
-                        }} className="card-inspector-item">
+                            cursor: isMyPile && card.name.toLowerCase().includes("milagro") ? 'pointer' : 'default',
+                            transition: 'transform 0.2s',
+                            position: 'relative'
+                        }} className="card-inspector-item" onClick={(e) => handleCardClick(e, card)}>
                             <img
-                                src={card.texture}
+                                src={card.hidden ? "/textures/verso/Back Artwork.png" : card.texture}
                                 alt={card.name}
-                                style={{ width: '100%', height: '100%', borderRadius: '10px', boxShadow: '0 5px 15px black' }}
+                                style={{
+                                    width: '100%', height: '100%', borderRadius: '10px', boxShadow: '0 5px 15px black',
+                                    border: selectedMilagro?.id === card.id ? '3px solid #d4af37' : 'none'
+                                }}
                             />
+                            {isMyPile && card.name.toLowerCase().includes("milagro") && (
+                                <div style={{
+                                    position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)',
+                                    background: '#d4af37', color: 'black', padding: '2px 8px', borderRadius: '4px',
+                                    fontSize: '0.8em', fontWeight: 'bold'
+                                }}>
+                                    GIVE
+                                </div>
+                            )}
                         </div>
                     ))
                 )}
             </div>
 
-            <p style={{ marginTop: 'auto', color: '#888', paddingTop: '20px' }}>(Tap anywhere to close)</p>
+            <p style={{ marginTop: 'auto', color: '#888', paddingTop: '20px' }}>(Tap background to close)</p>
         </div>
     );
 };

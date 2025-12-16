@@ -217,27 +217,36 @@ const useGameStore = create((set, get) => ({
         });
     },
 
-    currentCard: keptCard,
-    phase: GAME_PHASES.READING
-};
+    chooseCard: (keptCard) => {
+        set((state) => {
+            const other = state.choices.find(c => c.id !== keptCard.id);
+            const newDeck = [...state.deck];
+            if (other) newDeck.push(other);
+
+            return {
+                choices: [],
+                deck: newDeck,
+                currentCard: keptCard,
+                phase: GAME_PHASES.READING
+            };
         });
     },
 
-moveCard: (cardId, fromPlayerIndex, toPlayerIndex) => {
-    set((state) => {
-        const newPlayers = [...state.players];
-        const fromPlayer = newPlayers[fromPlayerIndex];
-        const toPlayer = newPlayers[toPlayerIndex];
+    moveCard: (cardId, fromPlayerIndex, toPlayerIndex) => {
+        set((state) => {
+            const newPlayers = [...state.players];
+            const fromPlayer = newPlayers[fromPlayerIndex];
+            const toPlayer = newPlayers[toPlayerIndex];
 
-        const cardIndex = fromPlayer.discardPile.findIndex(c => c.id === cardId);
-        if (cardIndex === -1) return {}; // Failed
+            const cardIndex = fromPlayer.discardPile.findIndex(c => c.id === cardId);
+            if (cardIndex === -1) return {}; // Failed
 
-        const [card] = fromPlayer.discardPile.splice(cardIndex, 1);
-        toPlayer.discardPile = [card, ...toPlayer.discardPile];
+            const [card] = fromPlayer.discardPile.splice(cardIndex, 1);
+            toPlayer.discardPile = [card, ...toPlayer.discardPile];
 
-        return { players: newPlayers };
-    });
-}
+            return { players: newPlayers };
+        });
+    }
 }));
 
 export default useGameStore;
