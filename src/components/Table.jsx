@@ -27,8 +27,9 @@ const Table = () => {
     const targetDiscardPos = useMemo(() => {
         if (!players.length) return [2.5, 0, 0]; // Default fallback
         const pos = getPlayerPos(currentPlayerIndex, players.length);
-        // Offset slightly in front of player
-        return [pos[0] * 0.8, 0, pos[2] * 0.8];
+        // Place discard pile slightly IN FRONT of the player (closer to center) and lower
+        // Player is at Radius 3.5. Discard at 2.5?
+        return [pos[0] * 0.7, 0, pos[2] * 0.7];
     }, [currentPlayerIndex, players.length]);
 
     return (
@@ -38,7 +39,7 @@ const Table = () => {
                 <Card
                     texturePath="/textures/verso/Back Artwork.png"
                     position={[0, 0, 0]}
-                    rotation={[-Math.PI / 2, 0, Math.PI]} // Face down
+                    rotation={[-Math.PI / 2, 0, 0]} // Fixed rotation: 0 instead of Math.PI to flip back
                     scale={1}
                     active={false}
                     onClick={() => {
@@ -171,6 +172,13 @@ const AnimatedCard = ({ card, phase, targetPos, onDrawComplete, onDiscardComplet
                     duration: 0.6,
                     ease: "power2.out"
                 }, "<0.1");
+
+            } else if (phase === 'READING') {
+                // EXPLICITLY HOLD READING POSITION
+                // This ensures if the component updates or if reverb happened, we snap back to reading pose
+                gsap.to(groupRef.current.position, { x: 0, y: 4, z: 0, duration: 0.2 });
+                gsap.to(groupRef.current.rotation, { x: -0.1, y: 0, z: 0, duration: 0.2 });
+                gsap.to(groupRef.current.scale, { x: 2, y: 2, z: 2, duration: 0.2 });
 
             } else if (phase === 'DISCARDING') {
                 const tl = gsap.timeline({ onComplete: onDiscardComplete });
