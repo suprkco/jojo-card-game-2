@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { Suspense, Component } from 'react'
+import React, { Suspense, Component } from 'react'
 import Table from './components/Table'
 import CameraController from './components/CameraController'
 import GameSetup from './components/GameSetup'
