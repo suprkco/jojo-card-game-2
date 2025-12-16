@@ -243,8 +243,8 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
             // Base rotation: readingRotation
             // Add tilt: pointer.x * factor
 
-            const targetRotX = readingRotation[0] - (state.pointer.y * 0.2); // Look up/down
-            const targetRotY = readingRotation[1] + (state.pointer.x * 0.2); // Look left/right
+            const targetRotX = readingRotation[0] - (state.pointer.y * 0.8); // Look up/down
+            const targetRotY = readingRotation[1] + (state.pointer.x * 0.8); // Look left/right
 
             // Smooth damping
             // We can't use dampE for pure values easily, manual lerp is fine
@@ -347,7 +347,7 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                 seed={uniqueSeed}
                 direction={-1.0}
                 depthTest={phase !== 'READING'}
-                renderOrder={phase === 'READING' ? 999 : 0}
+                renderOrder={phase === 'READING' ? 998 : 0} // Lower order than front
             />
         </group>
     );
