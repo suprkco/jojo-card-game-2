@@ -22,13 +22,15 @@ export const parseDeck = (csvText) => {
                         mechanic = MECHANICS.FLECHE;
                     }
 
+                    const cleanText = (text) => text ? text.replace(/_x000d_/g, '\n').replace(/_x000D_/g, '\n').trim() : '';
+
                     return {
                         id: row.frame,
-                        name: row.card_name,
+                        name: cleanText(row.card_name),
                         texture: `/textures/${row.frame}.png`,
-                        description: row.description,
+                        description: cleanText(row.description),
                         mechanic: mechanic,
-                        standName: row.stand_name,
+                        standName: cleanText(row.stand_name),
                         cardNumber: row.card_number
                     };
                 });
