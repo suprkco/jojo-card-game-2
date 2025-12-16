@@ -268,8 +268,8 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                 const tl = gsap.timeline({ onComplete: onDrawComplete });
 
                 tl.to(groupRef.current.position, {
-                    y: 0.9, // Fixed to 0.9
-                    z: 0,
+                    y: 2, // Lifted up
+                    z: 2, // Brought closer to camera to avoid clipping
                     duration: 0.4,
                     ease: "back.out(1.4)"
                 });
@@ -287,8 +287,8 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
                 }, "<0.05");
 
             } else if (phase === 'READING') {
-                // Hold Position
-                gsap.to(groupRef.current.position, { x: 0, y: 0.9, z: 0, duration: 0.2, overwrite: true });
+                // Hold Position (Closer to camera)
+                gsap.to(groupRef.current.position, { x: 0, y: 2, z: 2, duration: 0.2, overwrite: true });
                 // Rotation is now handled by useFrame mostly, but we set base here
                 // actually gsap might fight useFrame. 
                 // Fix: In READING, we let useFrame take control of rotation. 
