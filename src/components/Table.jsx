@@ -28,8 +28,8 @@ const Table = () => {
 
     // Calculate reading rotation to face camera at [0, 8, 6]
     // Card at [0, 4, 0]. Vector to Cam: [0, 4, 6].
-    // Pitch (X-axis) = atan2(4, 6) ~= 0.588 rads
-    const readingRotation = useMemo(() => [Math.atan2(4, 6), 0, 0], []);
+    // Pitch (X-axis) needs to be negative to look "up" at the camera
+    const readingRotation = useMemo(() => [-Math.atan2(4, 6), 0, 0], []);
 
     // Get position of current player to send card to
     const targetDiscardPos = useMemo(() => {
@@ -171,70 +171,79 @@ const AnimatedCard = ({ card, phase, targetPos, readingRotation, onDrawComplete,
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
+            // Kill active tweens to prevent fighting
+            gsap.killTweensOf(groupRef.current);
+            gsap.killTweensOf(groupRef.current.position);
+            gsap.killTweensOf(groupRef.current.rotation);
+            gsap.killTweensOf(groupRef.current.scale);
+
             if (phase === 'DRAWING') {
-                // START
+                // START (Reset only if drawing fresh)
                 gsap.set(groupRef.current.position, { x: 0, y: 0, z: 0 });
                 gsap.set(groupRef.current.rotation, { x: -Math.PI / 2, y: 0, z: Math.PI });
                 gsap.set(groupRef.current.scale, { x: 0.1, y: 0.1, z: 0.1 });
 
                 const tl = gsap.timeline({ onComplete: onDrawComplete });
 
-                // DRAW ANIMATION
+                // DRAW ANIMATION (Snappy!)
                 tl.to(groupRef.current.position, {
                     y: 4,
                     z: 0,
-                    duration: 0.7,
-                    ease: "back.out(1.2)"
+                    duration: 0.4,
+                    ease: "back.out(1.4)"
                 });
                 tl.to(groupRef.current.scale, {
                     x: 2, y: 2, z: 2,
-                    duration: 0.5
+                    duration: 0.3
                 }, "<");
                 tl.to(groupRef.current.rotation, {
                     x: readingRotation[0],
                     y: readingRotation[1],
                     z: readingRotation[2],
-                    duration: 0.6,
-                    ease: "power2.out"
-                }, "<0.1");
+                    duration: 0.4,
+                    ease: "back.out(1.2)"
+                }, "<0.05");
 
             } else if (phase === 'READING') {
                 // EXPLICITLY HOLD READING POSITION
-                // Snaps to perfect reading angle if it drifted or was reset
-                gsap.to(groupRef.current.position, { x: 0, y: 4, z: 0, duration: 0.1 });
+                // Overwrite ensures we snap to it even if previous tween was running
+                gsap.to(groupRef.current.position, { x: 0, y: 4, z: 0, duration: 0.2, overwrite: true });
                 gsap.to(groupRef.current.rotation, {
                     x: readingRotation[0],
                     y: readingRotation[1],
                     z: readingRotation[2],
-                    duration: 0.1
+                    duration: 0.2,
+                    overwrite: true
                 });
-                gsap.to(groupRef.current.scale, { x: 2, y: 2, z: 2, duration: 0.1 });
+                gsap.to(groupRef.current.scale, { x: 2, y: 2, z: 2, duration: 0.2, overwrite: true });
 
             } else if (phase === 'DISCARDING') {
                 const tl = gsap.timeline({ onComplete: onDiscardComplete });
 
-                // DISCARD ANIMATION
+                // DISCARD ANIMATION (Fast swoop from current pos)
                 tl.to(groupRef.current.position, {
                     x: targetPos[0],
-                    y: 0.1,
+                    y: 0.02, // Land slightly above table/pile
                     z: targetPos[2],
-                    duration: 0.6,
-                    ease: "power2.in"
+                    duration: 0.4,
+                    ease: "power3.in"
                 });
+                // Simultaneous rotation to flat
                 tl.to(groupRef.current.rotation, {
                     x: -Math.PI / 2,
-                    y: Math.random() * Math.PI,
+                    y: Math.random() * Math.PI, // Random spin
                     z: 0,
-                    duration: 0.5
+                    duration: 0.35
                 }, "<");
                 tl.to(groupRef.current.scale, {
                     x: 0.8, y: 0.8, z: 0.8,
-                    duration: 0.6
+                    duration: 0.35
                 }, "<");
             }
         }, groupRef);
 
-        return () => ctx.revert();
+        // DO NOT REVERT - just kill. Persists visual state between phases.
+        return () => ctx.kill();
     }, [phase, targetPos, readingRotation]);
 
     return (
