@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { loadDeckFromPath, MECHANICS } from '../utils/csvParser';
+import { loadDeckFromPath, parseDeck, MECHANICS } from '../utils/csvParser';
 
 export const GAME_PHASES = {
     IDLE: 'IDLE',
