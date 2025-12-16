@@ -33,16 +33,19 @@ const useGameStore = create((set, get) => ({
     // Bras Droit specifics
     extraDraws: 0,
 
-    startGame: async (playerCount = 4) => {
+    inspectingPlayer: null, // Index of player whose pile is being inspected
+    setInspectingPlayer: (index) => set({ inspectingPlayer: index }),
+
+    startGame: async (playerNames = []) => {
         try {
             const response = await fetch('/cards.csv');
             const csvText = await response.text();
             const initialDeck = await parseDeck(csvText);
 
-            // Setup Players
-            const players = Array.from({ length: playerCount }).map((_, i) => ({
+            // Setup Players from Names
+            const players = playerNames.map((name, i) => ({
                 id: i,
-                name: `Jojo ${i + 1}`,
+                name: name || `Jojo ${i + 1}`,
                 avatar: AVATARS[i % AVATARS.length],
                 discardPile: []
             }));

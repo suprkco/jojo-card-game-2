@@ -6,7 +6,7 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 
 // Player Position Utilities
-const TABLE_RADIUS = 3.5;
+const TABLE_RADIUS = 2.5; // Tighter circle for better visibility
 const getPlayerPos = (index, total) => {
     // Index 0 = Bottom (Player), 1 = Left, 2 = Top, 3 = Right (Clockwise)
     // Angle 0 is Right. Angle PI/2 is Bottom.
@@ -23,7 +23,8 @@ const Table = () => {
     const {
         deck, phase, currentCard,
         drawCard, finishDrawAnimation, validateCard, finishDiscardAnimation,
-        players, currentPlayerIndex, choices, chooseCard
+        players, currentPlayerIndex, choices, chooseCard,
+        inspectingPlayer, setInspectingPlayer
     } = useGameStore();
 
     // Calculate reading rotation to face camera at [0, 8, 6]
@@ -69,6 +70,15 @@ const Table = () => {
                 ))}
             </group>
 
+            {/* Pile Inspector Overlay */}
+            {inspectingPlayer !== null && (
+                <PileInspector
+                    cards={players[inspectingPlayer].discardPile}
+                    onClose={() => setInspectingPlayer(null)}
+                    playerName={players[inspectingPlayer].name}
+                />
+            )}
+
             {/* Players & Discards */}
             {players.map((player, index) => {
                 const pos = getPlayerPos(index, players.length);
@@ -93,8 +103,15 @@ const Table = () => {
                             )}
                         </mesh>
 
-                        {/* Discard Slot Marker (Visual Only) */}
-                        <mesh position={[0, 0.01, 1.5]} rotation={[-Math.PI / 2, 0, 0]}>
+                        {/* Discard Slot Marker (Clickable) */}
+                        <mesh
+                            position={[0, 0.01, 1.5]}
+                            rotation={[-Math.PI / 2, 0, 0]}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setInspectingPlayer(index);
+                            }}
+                        >
                             <planeGeometry args={[1.6, 2.4]} />
                             <meshBasicMaterial color="white" opacity={0.1} transparent side={THREE.DoubleSide} />
                             <lineSegments>
@@ -103,19 +120,21 @@ const Table = () => {
                             </lineSegments>
                         </mesh>
 
-                        {/* Player's Discard Pile */}
-                        {player.discardPile.map((card, i) => (
-                            i === 0 && ( // Only render top card
-                                <Card
-                                    key={card.id || i}
-                                    texturePath={card.texture}
-                                    position={[0, 0.1, 1.5]} // Should match slot marker
-                                    rotation={[-Math.PI / 2, 0, Math.random() * 0.1 - 0.05]}
-                                    scale={0.8}
-                                    active={false}
-                                />
-                            )
-                        ))}
+                        {/* Player's Discard Pile (Top Card) */}
+                        {player.discardPile.length > 0 && (
+                            <Card
+                                key={player.discardPile[0].id}
+                                texturePath={player.discardPile[0].texture}
+                                position={[0, 0.1, 1.5]}
+                                rotation={[-Math.PI / 2, 0, Math.random() * 0.1 - 0.05]}
+                                scale={0.8}
+                                active={false}
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent drawing if clicking pile
+                                    setInspectingPlayer(index);
+                                }}
+                            />
+                        )}
                     </group>
                 );
             })}
@@ -144,6 +163,48 @@ const Table = () => {
         </group>
     );
 };
+
+// Simple Overlay for Pile Inspection
+const PileInspector = ({ cards, onClose, playerName }) => {
+    // Show grid of cards in 3D space overlay
+    // Or just a 2D HTML overlay? 2D is easier for scrolling. But user wants 3D vibe.
+    // Let's stick to 2D HTML overlay for clarity as requested "consult pile".
+    return (
+        <group>
+            {/* Dim background */}
+            <mesh position={[0, 2, 0]} onClick={onClose}>
+                <planeGeometry args={[20, 20]} />
+                <meshBasicMaterial color="black" transparent opacity={0.8} />
+            </mesh>
+
+            {/* Title */}
+            <Text position={[0, 4, 0]} fontSize={0.5} color="#d4af37" anchorX="center">
+                {playerName}'s Discard Pile
+            </Text>
+
+            {/* Grid of Cards (Visual Only) */}
+            <group position={[-3, 3, 0]}>
+                {cards.map((card, i) => {
+                    const row = Math.floor(i / 5);
+                    const col = i % 5;
+                    return (
+                        <Card
+                            key={i}
+                            texturePath={card.texture}
+                            position={[col * 1.5, -row * 2, 0]}
+                            scale={1}
+                            active={true} // High res
+                            rotation={[0, 0, 0]}
+                        />
+                    )
+                })}
+            </group>
+        </group>
+    );
+};
+
+// Text helper for R3F
+import { Text } from '@react-three/drei';
 
 const Choices = ({ cards, onChoose }) => {
     return (
