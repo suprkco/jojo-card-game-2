@@ -4,8 +4,6 @@ import useGameStore, { GAME_PHASES } from '../store/gameStore';
 const GameSetup = () => {
     const { phase, startGame } = useGameStore();
 
-    if (phase !== GAME_PHASES.SETUP) return null;
-
     const [names, setNames] = React.useState([]);
     const [inputValue, setInputValue] = React.useState('');
 
@@ -15,6 +13,8 @@ const GameSetup = () => {
             setInputValue('');
         }
     };
+
+    if (phase !== GAME_PHASES.SETUP) return null;
 
     const btnStyle = {
         background: 'linear-gradient(45deg, #442a8b, #a73c9f)',
